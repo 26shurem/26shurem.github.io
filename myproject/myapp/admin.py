@@ -1,7 +1,8 @@
 from django.contrib import admin
-from .models import Contact
+from .models import Contact,MembershipPlan, Enrollment,Trainer
 # Register your models here.
 admin.site.register(Contact)
-print()
-print()
-print("hello")
+admin.site.register(MembershipPlan)
+admin.site.register(Enrollment)
+admin.site.register(Trainer)
+

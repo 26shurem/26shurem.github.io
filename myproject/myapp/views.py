@@ -1,10 +1,16 @@
+from email.headerregistry import Address
+from lib2to3.fixes.fix_input import context
+from types import MemberDescriptorType
+
 from django.contrib.auth import authenticate
+from django.db.backends.ddl_references import Reference
 from django.shortcuts import render ,redirect
 from django.contrib import (messages)
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate,login,logout
 from django.template.context_processors import request
-from .models import Contact
+from .models import Contact, MembershipPlan, Enrollment, Trainer
+
 
 # Create your views here.
 def home(request):
@@ -72,3 +78,25 @@ def contacts(request):
         messages.info(request,"Thanks")
         return redirect(('/contact'))
     return render(request,'myapp/contact.html')
+def Enroll(request):
+    if not request.user.is_authenticated:
+        messages.warning(request, "Please Login and Try again")
+        return redirect('/login_user')
+    Membership = MembershipPlan.objects.all()
+    SelectTrainer = Trainer.objects.all()
+    if request.method == "POST":
+        context = {"Membership", Membership,"SelectTrainer",SelectTrainer}
+        FullName = request.POST.get("FullName")
+        email = request.POST.get("email")
+        PhoneNumber = request.POST.get("PhoneNumber")
+        gender = request.POST.get("gender")
+        DOB = request.POST.get("DOB")
+        member=request.POST.get("member")
+        trainer = request.POST.get("trainer")
+        refrence = request.POST.get("refrence")
+        address = request.POST.get("address")
+        query = Enrollment(FullName=FullName,Email=email,Gender=gender,PhoneNumber = PhoneNumber,DOB=DOB,SelectMembershipplan=member,SelectTrainer=trainer,Reference=refrence,Address=address)
+        query.save()
+        messages.success(request, "Thanks for Joining!")
+        return redirect('/join')
+    return render(request, "myapp/enroll.html",context)
